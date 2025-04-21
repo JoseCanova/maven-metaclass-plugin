@@ -3,11 +3,34 @@
   <groupId>org.nanotek</groupId>
   <artifactId>metaclass.plugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <dependencies>
+  <packaging>maven-plugin</packaging>
+  <properties>
+        <java.version>22</java.version>
+        <swagger.version>3.0.0</swagger.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <admin.version>2.6.7</admin.version>
+        <querydsl.version>5.0.0</querydsl.version>
+        <buddy-version>1.17.2</buddy-version>
+        <metaclass-version>0.0.1-SNAPSHOT</metaclass-version>
+        <junit.version>5.11.4</junit.version>
+    </properties>
+    <dependencies>
       <dependency>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.15.1</version>
+      </dependency>
+    <!-- dependency on annotations -->
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.15.1</version>
+      <scope>provided</scope>
+    </dependency>
+      <dependency>
+          <groupId>org.nanotek</groupId>
+          <artifactId>metaclass.bytebuddy</artifactId>
+          <version>0.0.1-SNAPSHOT</version>
       </dependency>
        <dependency>
             <groupId>org.vineflower</groupId>
@@ -17,6 +40,15 @@
    </dependencies>
    <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgument>-XDignore.symbol.file</compilerArgument>
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                </configuration>
+            </plugin>
             <!-- Maven Plugin Plugin to generate plugin descriptors from annotations -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -24,7 +56,7 @@
                 <version>3.15.1</version>
                 <configuration>
                     <!-- goalPrefix is used when you invoke the plugin. For example: mvn hello:sayhi -->
-                    <goalPrefix>hello</goalPrefix>
+                    <goalPrefix>generate</goalPrefix>
                 </configuration>
                 <executions>
                     <execution>

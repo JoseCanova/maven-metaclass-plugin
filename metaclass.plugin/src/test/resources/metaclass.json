@@ -1,0 +1,85 @@
+[
+  {
+    "identity": {
+      "id": null,
+      "definition": "",
+      "shortName": "simple_table.simple_table_pkey",
+      "name": "simple_table_pkey",
+      "columns": [
+        {
+          "id": null,
+          "name": "simple_key"
+        }
+      ]
+    },
+    "metaAttributes": [
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": true,
+        "name": "simpleKey",
+        "isId": true,
+        "clazz": "java.lang.String",
+        "columnName": "simple_key",
+        "length": "200",
+        "required": false,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": true,
+        "isGenerated": false,
+        "isPartOfForeignKey": false
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "simpleColumn",
+        "isId": false,
+        "clazz": "java.lang.String",
+        "columnName": "simple_column",
+        "length": "200",
+        "required": false,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": false
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "simpleDate",
+        "isId": false,
+        "clazz": "java.sql.Date",
+        "columnName": "simple_date",
+        "length": "13",
+        "required": false,
+        "sqlType": "date",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": false
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "simpleTimestamp",
+        "isId": false,
+        "clazz": "java.sql.Timestamp",
+        "columnName": "simple_timestamp",
+        "length": "29",
+        "required": false,
+        "sqlType": "timestamp",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": false
+      }
+    ],
+    "hasPrimaryKey": true,
+    "className": "simple_table",
+    "tableName": "simple_table"
+  }
+]
