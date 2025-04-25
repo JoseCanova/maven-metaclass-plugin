@@ -33,13 +33,10 @@ import org.nanotek.metaclass.schema.crawler.*;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
-/**
- * Says "Hello" to a given name.
- */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class MetaClassJpaGenerator extends AbstractMojo {
 
-public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
+	public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
 	
 	public static final MetaClassVFSURLClassLoader byteArrayClassLoader  = new MetaClassVFSURLClassLoader 
 																			(MetaClassJpaGenerator.class.getClassLoader() , 
@@ -61,7 +58,7 @@ public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.un
     /**
      * The json with metaclass relation to represent as java classes.
      */
-    @Parameter(property = "fileLocation", defaultValue = "/home/jose/git/plugin/maven-metaclass-plugin/metaclass.plugin/src/test/resources/metaclass.json")
+    @Parameter(property = "fileLocation", defaultValue = "")
     private String fileLocation;
 
     @Parameter(property = "provider", defaultValue = "database")
@@ -83,15 +80,17 @@ public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.un
     @Override
     public void execute() throws MojoExecutionException {
     	try {
-		        getLog().info("Hello, " + name + "!");
+		        getLog().info("initializing plugin execution" + name + "!");
 		        ClassConfigurationInitializer cci = null;
 		        
 		        if(provider.equals("database") &&  !dataSourceConfiguration.isEmpty())
 		        {
+		        	getLog().info("generating model from database schema.");
 		        	cci = new DatabaseConfigurationInitializer();
 		        	cci.configureMetaClasses(dataSourceConfiguration, byteArrayClassLoader, metaClassRegistry);
-		        }else if(!fileLocation.isEmpty())
+		        }else if(provider.equals("file") && !fileLocation.isEmpty())
 		        {
+		        	getLog().info("generating model from json file.");
 		        	cci = new FileLocationConfigurationInitializer();
 		        	cci.configureMetaClasses(fileLocation, byteArrayClassLoader, metaClassRegistry);
 		        }
