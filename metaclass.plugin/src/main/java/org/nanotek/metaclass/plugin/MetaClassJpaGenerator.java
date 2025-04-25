@@ -103,9 +103,8 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		        .forEach(clazz->
 		        				saveEntityFile(targetDirectory, Class.class.cast(clazz),byteArrayClassLoader));
 		        if(generateSources) {
-		        	metaClassRegistry
-		        	.getEntityClasses()
-		        	.forEach(clazz -> decompileClassFile(clazz));
+		        	decompileJavaClasses (metaClassRegistry
+		        	.getEntityClasses());
 		        }
     	}catch(Exception ex) {
         	ex.printStackTrace();
@@ -113,10 +112,6 @@ public class MetaClassJpaGenerator extends AbstractMojo {
         }
     }
     
-     private void decompileClassFile(Class<Base<?>> clazz) {
-		return;
-	}
-
 	void saveEntityFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
     	
     	String directoryString = fileLocation.getAbsolutePath() ;
@@ -150,10 +145,15 @@ public class MetaClassJpaGenerator extends AbstractMojo {
      
      
      
-	public static void decompileJavaClasses (List<Class<?>> javaClassList) {
+	public void decompileJavaClasses (List<Class<Base<?>>> list) {
         
- 		javaClassList.forEach(cl ->{
-         	File input = new File("/home/jose/Documents/".concat(cl.getSimpleName()).concat(".class"));
+ 		list.forEach(cl ->{
+ 			
+ 			String dir = targetDirectory.getAbsolutePath();
+ 			
+ 			String packageDir = cl.getPackageName().replaceAll("[.]","/");
+ 			
+         	File input = new File(dir.concat("/").concat(packageDir).concat("/").concat(cl.getSimpleName()).concat(".class"));
  	        
  	        // Define the output folder where decompiled source files will be written.
  	        File output = new File("/home/jose/Documents/".concat(cl.getSimpleName()).concat(".java"));
