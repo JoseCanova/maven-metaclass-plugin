@@ -20,6 +20,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.java.decompiler.api.Decompiler;
 import org.jetbrains.java.decompiler.main.decompiler.ConsoleFileSaver;
+import org.nanotek.Base;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.ClassFileSerializer;
 import org.nanotek.MetaClassRegistry;
@@ -67,6 +68,8 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property = "dataSourceConfiguration", defaultValue = "")
     private String dataSourceConfiguration;
     
+    @Parameter(property = "generateSources", defaultValue = "false")
+    private boolean generateSources;
     
     @Parameter(defaultValue = "${project.build.directory}/", required = true)
     private File outputDirectory;
@@ -99,14 +102,22 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		        .getEntityClasses()
 		        .forEach(clazz->
 		        				saveEntityFile(targetDirectory, Class.class.cast(clazz),byteArrayClassLoader));
-
+		        if(generateSources) {
+		        	metaClassRegistry
+		        	.getEntityClasses()
+		        	.forEach(clazz -> decompileClassFile(clazz));
+		        }
     	}catch(Exception ex) {
         	ex.printStackTrace();
         	throw new MojoExecutionException(ex);
         }
     }
     
-     void saveEntityFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
+     private void decompileClassFile(Class<Base<?>> clazz) {
+		return;
+	}
+
+	void saveEntityFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
     	
     	String directoryString = fileLocation.getAbsolutePath() ;
     	
@@ -116,13 +127,14 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 
     	try 
     	{
-
+    		String packageDir = c.getPackageName().replaceAll("[.]","/");
     		byte[] classBytes = is.readAllBytes();
     		var className = c.getName();
     		var simpleName = c.getSimpleName();
-    		Path dirPath = Paths.get(directoryString, new String[] {});
+    		String finalLocationDir = directoryString.concat("/").concat(packageDir);
+    		Path dirPath = Paths.get(finalLocationDir, new String[] {});
     		Files.createDirectories(dirPath);
-    		var classLocation  = directoryString.concat("/").concat(simpleName).concat(".class");
+    		var classLocation  = finalLocationDir.concat("/").concat(simpleName).concat(".class");
     		Path classPath = Paths.get(classLocation, new String[] {});
     		if(!Files.exists(classPath, LinkOption.NOFOLLOW_LINKS))
     			Files.createFile(classPath, new FileAttribute[0]);
@@ -135,6 +147,9 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     	
     }
     
+     
+     
+     
 	public static void decompileJavaClasses (List<Class<?>> javaClassList) {
         
  		javaClassList.forEach(cl ->{
