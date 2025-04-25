@@ -28,6 +28,8 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 
+import org.nanotek.metaclass.schema.crawler.*;
+
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
@@ -52,16 +54,22 @@ public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.un
     /**
      * The name to greet.
      */
-    @Parameter(property = "name", defaultValue = "World")
+    @Parameter(property = "name", defaultValue = "")
     private String name;
 
     
     /**
-     * The json with metaclass relation to represent as classes.
+     * The json with metaclass relation to represent as java classes.
      */
     @Parameter(property = "fileLocation", defaultValue = "/home/jose/git/plugin/maven-metaclass-plugin/metaclass.plugin/src/test/resources/metaclass.json")
     private String fileLocation;
 
+    @Parameter(property = "provider", defaultValue = "database")
+    private String provider;
+    
+    @Parameter(property = "dataSourceConfiguration", defaultValue = "")
+    private String dataSourceConfiguration;
+    
     
     @Parameter(defaultValue = "${project.build.directory}/", required = true)
     private File outputDirectory;
@@ -69,17 +77,29 @@ public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.un
     @Parameter(property="targetDirectory" , defaultValue = "${project.build.directory}/classes")
     private File targetDirectory;
     
+    @Parameter(property="sourceDirectory" , defaultValue = "${project.build.directory}/generated-sources")
+    private File sourceDirectory;
+    
     @Override
     public void execute() throws MojoExecutionException {
     	try {
 		        getLog().info("Hello, " + name + "!");
-		        ClassConfigurationInitializer cci = new FileLocationConfigurationInitializer();
-		        List<RdbmsMetaClass>theList = cci.getMetaClasses(fileLocation);
-		        cci.configureMetaClasses(fileLocation, byteArrayClassLoader, metaClassRegistry);
+		        ClassConfigurationInitializer cci = null;
+		        
+		        if(provider.equals("database") &&  !dataSourceConfiguration.isEmpty())
+		        {
+		        	cci = new DatabaseConfigurationInitializer();
+		        	cci.configureMetaClasses(dataSourceConfiguration, byteArrayClassLoader, metaClassRegistry);
+		        }else if(!fileLocation.isEmpty())
+		        {
+		        	cci = new FileLocationConfigurationInitializer();
+		        	cci.configureMetaClasses(fileLocation, byteArrayClassLoader, metaClassRegistry);
+		        }
+		        
 		        metaClassRegistry
 		        .getEntityClasses()
 		        .forEach(clazz->
-		       saveEntityFile(targetDirectory, Class.class.cast(clazz),byteArrayClassLoader));
+		        				saveEntityFile(targetDirectory, Class.class.cast(clazz),byteArrayClassLoader));
 
     	}catch(Exception ex) {
         	ex.printStackTrace();

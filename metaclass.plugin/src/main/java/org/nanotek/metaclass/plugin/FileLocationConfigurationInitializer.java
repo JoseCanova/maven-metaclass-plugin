@@ -3,6 +3,8 @@ package org.nanotek.metaclass.plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class FileLocationConfigurationInitializer
 implements ClassConfigurationInitializer{
 
 	private ObjectMapper objectMapper;
+	private FileSystem fileSystem;
 	
 	public FileLocationConfigurationInitializer() {
 		postConstruct();
@@ -22,6 +25,7 @@ implements ClassConfigurationInitializer{
 
 	private void postConstruct() {
 		this.objectMapper = new ObjectMapper();
+		fileSystem = FileSystems.getDefault();
 	}
 
 	@Override

@@ -32,6 +32,11 @@
           <artifactId>metaclass.bytebuddy</artifactId>
           <version>0.0.1-SNAPSHOT</version>
       </dependency>
+      <dependency>
+            <groupId>org.nanotek</groupId>
+            <artifactId>metaclass.plugin.support</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+      </dependency>
        <dependency>
             <groupId>org.vineflower</groupId>
             <artifactId>vineflower</artifactId>
