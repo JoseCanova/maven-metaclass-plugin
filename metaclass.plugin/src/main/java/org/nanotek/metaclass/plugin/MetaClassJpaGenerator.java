@@ -19,17 +19,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.java.decompiler.api.Decompiler;
-import org.jetbrains.java.decompiler.main.decompiler.ConsoleFileSaver;
 import org.nanotek.Base;
 import org.nanotek.ClassConfigurationInitializer;
-import org.nanotek.ClassFileSerializer;
 import org.nanotek.MetaClassRegistry;
 import org.nanotek.MetaClassVFSURLClassLoader;
-import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
-import org.nanotek.metaclass.BuilderMetaClassRegistry;
-import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
-
-import org.nanotek.metaclass.schema.crawler.*;
+import org.nanotek.vineflower.ConsoleFileSaver;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -155,10 +149,11 @@ public class MetaClassJpaGenerator extends AbstractMojo {
  			
          	File input = new File(dir.concat("/").concat(packageDir).concat("/").concat(cl.getSimpleName()).concat(".class"));
  	        
- 	        // Define the output folder where decompiled source files will be written.
- 	        File output = new File("/home/jose/Documents/".concat(cl.getSimpleName()).concat(".java"));
- 	        
+ 	        File output = new File(sourceDirectory.getAbsolutePath().concat("/").concat(packageDir).concat("/").concat(cl.getSimpleName()).concat(".java"));
+    		
+
  	        try {
+ 	        	Files.createDirectories(Paths.get(sourceDirectory.getAbsolutePath().concat("/").concat(packageDir)));
  	        	 if(output.exists()) {
  	        		 output.delete();
  	        	 }
@@ -170,7 +165,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
  	        			 .option("decompile-generics", "true")
  	     	        	.build();
  	            decompiler.decompile();
- 	            System.out.println("Decompilation completed successfully.");
+ 	            getLog().info("Decompilation completed successfully.");
  	        } catch (Exception e) {
  	            e.printStackTrace();
  	        }
