@@ -23,7 +23,7 @@ import org.nanotek.Base;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.MetaClassRegistry;
 import org.nanotek.MetaClassVFSURLClassLoader;
-import org.nanotek.vineflower.ConsoleFileSaver;
+import org.nanotek.vineflower.FileGenerator;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -161,7 +161,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
  	        	 output.createNewFile();
  	        	 Decompiler decompiler =  Decompiler.builder()
  	        			 .inputs(input)
- 	        			 .output(new ConsoleFileSaver(output))
+ 	        			 .output(new FileGenerator(output))
  	        			 .option("decompile-generics", "true")
  	     	        	.build();
  	            decompiler.decompile();
