@@ -23,6 +23,8 @@ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.MetaClassRegistry;
 import org.nanotek.MetaClassVFSURLClassLoader;
+import org.nanotek.metaclass.RepositoryClassBuilder;
+import org.nanotek.metaclass.RepositoryPair;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -94,10 +96,21 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		        metaClassRegistry
 		        .getEntityClasses()
 		        .forEach(clazz->
-		        				saveEntityFile(targetDirectory, Class.class.cast(clazz),byteArrayClassLoader));
+		        				serializeClassFile(targetDirectory, clazz,byteArrayClassLoader));
+		        //separate the loops because will add a parameter to provide repository generation as optional step.
+		        metaClassRegistry
+		        .getEntityClasses()
+		        .forEach(clazz->
+		        				createRestRepository(targetDirectory, clazz,byteArrayClassLoader,metaClassRegistry));
+		        metaClassRegistry
+		        .getRepositoryClasses()
+		        .forEach(clazz->
+							serializeClassFile(targetDirectory, clazz,byteArrayClassLoader));
 		        if(generateSources) {
 		        	decompileJavaClasses (metaClassRegistry
-		        	.getEntityClasses());
+		        					.getEntityClasses());
+		        	decompileJavaClasses (metaClassRegistry
+				        			.getRepositoryClasses());
 		        }
     	}catch(Exception ex) {
         	ex.printStackTrace();
@@ -105,7 +118,15 @@ public class MetaClassJpaGenerator extends AbstractMojo {
         }
     }
     
-	void saveEntityFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
+	private void createRestRepository(File targetDirectory2, Class<?> clazz,
+			MetaClassVFSURLClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
+		
+		RepositoryPair repositoryClass = RepositoryClassBuilder.prepareReppositoryForClass(clazz);
+		Class<?> repo = repositoryClass.unloaded().load(bytearrayclassloader2).getLoaded();
+		metaclassregistry2.registryRepositoryClass(clazz, repo);
+	}
+
+	void serializeClassFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
     	
     	String directoryString = fileLocation.getAbsolutePath() ;
     	
@@ -155,7 +176,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
  	        	 if(output.exists()) {
  	        		 output.delete();
  	        	 }
- 	        	IResultSaver saver = new FileGenerator(output);
+ 	        	IResultSaver saver = new JavaFileGenerator(output);
  	        	 output.createNewFile();
  	        	 Decompiler decompiler =  Decompiler.builder()
  	        			 .inputs(input)

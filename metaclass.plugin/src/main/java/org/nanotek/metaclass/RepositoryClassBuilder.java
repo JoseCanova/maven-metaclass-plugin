@@ -1,11 +1,14 @@
 package org.nanotek.metaclass;
 
 
+import java.lang.reflect.Field;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.nanotek.MetaClassVFSURLClassLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 //import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +25,10 @@ public class RepositoryClassBuilder   {
 	public static final String basePackage = MetaClassVFSURLClassLoader.REPO_PATH.replaceAll("[/]", ".") ;
 	
 
-	public static RepositoryPair prepareReppositoryForClass(Class<?> clazz , Class<?> idClass){
+	public static RepositoryPair prepareReppositoryForClass(Class<?> clazz){
+		
+		Class<?> idClass = getIdClass(clazz);
+		
 		Generic typeDescription = TypeDescription.Generic.Builder
 										.parameterizedType(JpaRepository.class, clazz , idClass)
 										.build()
@@ -39,12 +45,23 @@ public class RepositoryClassBuilder   {
 				.annotateType( AnnotationDescription.Builder.ofType(Qualifier.class)
 						.define("value",  theEntity.name().concat("Repository"))
 						.build())//collectionResourceRel = "people", path = "people"
-//				.annotateType( AnnotationDescription.Builder.ofType(RepositoryRestResource.class)
-//						.define("collectionResourceRel",  theEntity.name().toLowerCase())
-//						.define("path", theEntity.name().toLowerCase())
-//						.build())
+				.annotateType( AnnotationDescription.Builder.ofType(RepositoryRestResource.class)
+						.define("collectionResourceRel",  theEntity.name().toLowerCase())
+						.define("path", theEntity.name().toLowerCase())
+						.build())
 				.make();
 			return new RepositoryPair(repositoryName,unloaded);
 	}
 
+	 public static Class<?> getIdClass(Class<?> y) {
+			return Stream.of(y.getDeclaredFields())
+			.filter( f -> hasIdAnnotation(f))
+			.map(f -> f.getType())
+			.findFirst().orElseThrow();
+		}
+	 
+	 public static Boolean hasIdAnnotation(Field f) {
+			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(jakarta.persistence.Id.class)).count()==1;
+		}
+	
 }

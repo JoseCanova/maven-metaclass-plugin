@@ -6,11 +6,11 @@ import java.util.jar.Manifest;
 
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
-public class FileGenerator implements IResultSaver {
+public class JavaFileGenerator implements IResultSaver {
 
   private File output;
 
-public FileGenerator(File output) {
+public JavaFileGenerator(File output) {
 	  this.output = output;
   }
   @Override
