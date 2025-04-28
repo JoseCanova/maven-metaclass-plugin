@@ -19,11 +19,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.java.decompiler.api.Decompiler;
-import org.nanotek.Base;
+import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.MetaClassRegistry;
 import org.nanotek.MetaClassVFSURLClassLoader;
-import org.nanotek.vineflower.FileGenerator;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -71,7 +70,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property="targetDirectory" , defaultValue = "${project.build.directory}/classes")
     private File targetDirectory;
     
-    @Parameter(property="sourceDirectory" , defaultValue = "${project.build.directory}/generated-sources")
+    @Parameter(property="sourceDirectory" , defaultValue = "${project.build.sourceDirectory}")
     private File sourceDirectory;
     
     @Override
@@ -118,7 +117,6 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     	{
     		String packageDir = c.getPackageName().replaceAll("[.]","/");
     		byte[] classBytes = is.readAllBytes();
-    		var className = c.getName();
     		var simpleName = c.getSimpleName();
     		String finalLocationDir = directoryString.concat("/").concat(packageDir);
     		Path dirPath = Paths.get(finalLocationDir, new String[] {});
@@ -139,7 +137,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
      
      
      
-	public void decompileJavaClasses (List<Class<Base<?>>> list) {
+	public void decompileJavaClasses (List<Class<?>> list) {
         
  		list.forEach(cl ->{
  			
@@ -157,11 +155,11 @@ public class MetaClassJpaGenerator extends AbstractMojo {
  	        	 if(output.exists()) {
  	        		 output.delete();
  	        	 }
- 	        	
+ 	        	IResultSaver saver = new FileGenerator(output);
  	        	 output.createNewFile();
  	        	 Decompiler decompiler =  Decompiler.builder()
  	        			 .inputs(input)
- 	        			 .output(new FileGenerator(output))
+ 	        			 .output(saver)
  	        			 .option("decompile-generics", "true")
  	     	        	.build();
  	            decompiler.decompile();
