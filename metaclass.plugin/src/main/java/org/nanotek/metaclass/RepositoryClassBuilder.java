@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.nanotek.EntityPathConfigurableClassLoader;
 import org.nanotek.MetaClassVFSURLClassLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +26,7 @@ public class RepositoryClassBuilder   {
 	public static final String basePackage = MetaClassVFSURLClassLoader.REPO_PATH.replaceAll("[/]", ".") ;
 	
 
-	public static RepositoryPair prepareReppositoryForClass(Class<?> clazz){
+	public static RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
 		
 		Class<?> idClass = getIdClass(clazz);
 		
@@ -35,7 +36,12 @@ public class RepositoryClassBuilder   {
 										.asGenericType();
 		Entity theEntity = clazz.getAnnotation(Entity.class);
 		Optional.ofNullable(theEntity).orElseThrow();
-		String repositoryName = basePackage.concat(theEntity.name()).concat("Repository");
+		String repositoryName =  classLoader
+									.getRepositoryPath()
+									.replaceAll("[/]", ".")
+									.concat(".")
+									.concat(theEntity.name())
+									.concat("Repository"); //basePackage.concat(theEntity.name()).concat("Repository");
 		DynamicType.Unloaded<?> unloaded =   new ByteBuddy(ClassFileVersion.JAVA_V22)
 //				.makeInterface(EntityBaseRepository.class)
 				.makeInterface(typeDescription)
