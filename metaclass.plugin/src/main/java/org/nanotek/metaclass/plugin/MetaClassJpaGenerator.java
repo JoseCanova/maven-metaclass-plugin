@@ -21,6 +21,7 @@ import org.apache.maven.project.MavenProject;
 import org.jetbrains.java.decompiler.api.Decompiler;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.nanotek.ClassConfigurationInitializer;
+import org.nanotek.EntityPathConfigurableClassLoader;
 import org.nanotek.MetaClassRegistry;
 import org.nanotek.MetaClassVFSURLClassLoader;
 import org.nanotek.metaclass.RepositoryClassBuilder;
@@ -34,9 +35,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 
 	public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
 	
-	public static final MetaClassVFSURLClassLoader byteArrayClassLoader  = new MetaClassVFSURLClassLoader 
-																			(MetaClassJpaGenerator.class.getClassLoader() , 
-																					false ,fileSystem);
+	public   EntityPathConfigurableClassLoader byteArrayClassLoader;
 
 	public static final MetaClassRegistry<?> metaClassRegistry  = new  MetaClassRegistry<>();
 	
@@ -75,10 +74,24 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property="sourceDirectory" , defaultValue = "${project.build.sourceDirectory}")
     private File sourceDirectory;
     
+    @Parameter(property = "entityPackage", defaultValue = "")
+    private String entityPackage;
+    
+    @Parameter(property = "repositoryPackage", defaultValue = "")
+    private String repositoryPackage;
+
+    @Parameter(property = "servicePackage", defaultValue = "")
+    private String servicePackage;
+    
+    
     @Override
     public void execute() throws MojoExecutionException {
     	try {
-		        getLog().info("initializing plugin execution" + name + "!");
+    		
+    			getLog().info("configuring classloader");       
+    			byteArrayClassLoader = new EntityPathConfigurableClassLoader (fileSystem,entityPackage,repositoryPackage,servicePackage);
+    			
+    			getLog().info("initializing plugin execution" + name + "!");
 		        ClassConfigurationInitializer cci = null;
 		        
 		        if(provider.equals("database") &&  !dataSourceConfiguration.isEmpty())
@@ -119,14 +132,14 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     }
     
 	private void createRestRepository(File targetDirectory2, Class<?> clazz,
-			MetaClassVFSURLClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
+			EntityPathConfigurableClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
 		
 		RepositoryPair repositoryClass = RepositoryClassBuilder.prepareReppositoryForClass(clazz);
 		Class<?> repo = repositoryClass.unloaded().load(bytearrayclassloader2).getLoaded();
 		metaclassregistry2.registryRepositoryClass(clazz, repo);
 	}
 
-	void serializeClassFile(File fileLocation , Class c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
+	void serializeClassFile(File fileLocation , Class c, EntityPathConfigurableClassLoader bytearrayclassloader2) {
     	
     	String directoryString = fileLocation.getAbsolutePath() ;
     	
