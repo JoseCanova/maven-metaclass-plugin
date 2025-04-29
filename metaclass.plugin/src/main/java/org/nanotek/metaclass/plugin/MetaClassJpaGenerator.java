@@ -83,6 +83,8 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property = "servicePackage", defaultValue = "")
     private String servicePackage;
     
+    @Parameter(property = "createSpringRepositories", defaultValue = "false")
+    private boolean createSpringRepositories;
     
     @Override
     public void execute() throws MojoExecutionException {
@@ -111,19 +113,23 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		        .forEach(clazz->
 		        				serializeClassFile(targetDirectory, clazz,byteArrayClassLoader));
 		        //separate the loops because will add a parameter to provide repository generation as optional step.
-		        metaClassRegistry
-		        .getEntityClasses()
-		        .forEach(clazz->
-		        				createRestRepository(targetDirectory, clazz,byteArrayClassLoader,metaClassRegistry));
-		        metaClassRegistry
-		        .getRepositoryClasses()
-		        .forEach(clazz->
-							serializeClassFile(targetDirectory, clazz,byteArrayClassLoader));
+		        if(createSpringRepositories) {
+				        metaClassRegistry
+				        .getEntityClasses()
+				        .forEach(clazz->
+				        				createRestRepository(targetDirectory, clazz,byteArrayClassLoader,metaClassRegistry));
+				        metaClassRegistry
+				        .getRepositoryClasses()
+				        .forEach(clazz->
+									serializeClassFile(targetDirectory, clazz,byteArrayClassLoader));
+		        }
 		        if(generateSources) {
 		        	decompileJavaClasses (metaClassRegistry
 		        					.getEntityClasses());
-		        	decompileJavaClasses (metaClassRegistry
-				        			.getRepositoryClasses());
+		        	if(createSpringRepositories) {
+			        	decompileJavaClasses (metaClassRegistry
+					        			.getRepositoryClasses());
+		        	}
 		        }
     	}catch(Exception ex) {
         	ex.printStackTrace();
