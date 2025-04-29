@@ -43,7 +43,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     private MavenProject project;
 
     /**
-     * The name to greet.
+     * Not being used for now.
      */
     @Parameter(property = "name", defaultValue = "")
     private String name;
@@ -55,33 +55,65 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property = "fileLocation", defaultValue = "")
     private String fileLocation;
 
+    /**
+     * define which source provider will be used file or database
+     */
     @Parameter(property = "provider", defaultValue = "database")
     private String provider;
     
+    /**
+     * json file with datasource configuration location for schema crawler.
+     */
     @Parameter(property = "dataSourceConfiguration", defaultValue = "")
     private String dataSourceConfiguration;
     
+    /**
+     * define if the java sources will be generate or just the source files.
+     */
     @Parameter(property = "generateSources", defaultValue = "false")
     private boolean generateSources;
     
+    /**
+     * output directory as default.
+     */
     @Parameter(defaultValue = "${project.build.directory}/", required = true)
     private File outputDirectory;
 
+    /**
+     * target directory for generated class files.
+     */
     @Parameter(property="targetDirectory" , defaultValue = "${project.build.directory}/classes")
     private File targetDirectory;
     
+    /**
+     * define where will be serialized java source files.
+     */
     @Parameter(property="sourceDirectory" , defaultValue = "${project.build.sourceDirectory}")
     private File sourceDirectory;
     
+    /**
+     * define the entity package hierarchy in directory format.
+     */
     @Parameter(property = "entityPackage", defaultValue = "")
     private String entityPackage;
     
+    /**
+     * define the repository package hierarchy in directory format.
+     */
     @Parameter(property = "repositoryPackage", defaultValue = "")
     private String repositoryPackage;
 
+    /**
+     * not being used for now.
+     */
     @Parameter(property = "servicePackage", defaultValue = "")
     private String servicePackage;
     
+    /**
+     * define if will be created the spring repositories remembering that 
+     * just when generateSource option is select the spring repository option 
+     * is available.
+     */
     @Parameter(property = "createSpringRepositories", defaultValue = "false")
     private boolean createSpringRepositories;
     
