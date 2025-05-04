@@ -29,6 +29,8 @@ import org.nanotek.metaclass.RepositoryPair;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
+import jakarta.persistence.Id;
+
 /**
  * 
  * 
@@ -175,10 +177,11 @@ public class MetaClassJpaGenerator extends AbstractMojo {
         }
     }
     
+    //TODO: refactor this method when add configuration option for spring data annotations.
 	private void createRestRepository(File targetDirectory2, Class<?> clazz,
 			EntityPathConfigurableClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
 		
-		DefaultRepositoryClassBuilder repositoryClassBuilder = new DefaultRepositoryClassBuilder();
+		DefaultRepositoryClassBuilder<Id> repositoryClassBuilder = new DefaultRepositoryClassBuilder<>(Id.class);
 		
 		RepositoryPair repositoryClass = repositoryClassBuilder.prepareReppositoryForClass(clazz,bytearrayclassloader2);
 		Class<?> repo = repositoryClass.unloaded().load(bytearrayclassloader2).getLoaded();

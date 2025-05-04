@@ -1,6 +1,7 @@
 package org.nanotek.metaclass;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -20,10 +21,14 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 
-public class DefaultRepositoryClassBuilder   {
+public class DefaultRepositoryClassBuilder<T extends Annotation>   {
 	
 	
-	public DefaultRepositoryClassBuilder() {}
+	private Class<T> idClass;
+
+	public DefaultRepositoryClassBuilder(Class<T> idClass) {
+		this.idClass = idClass;
+	}
 
 	public RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
 		
@@ -66,7 +71,7 @@ public class DefaultRepositoryClassBuilder   {
 		}
 	 
 	 public  boolean hasIdAnnotation(Field f) {
-			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(jakarta.persistence.Id.class)).count()==1;
+			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(idClass)).count()==1;
 		}
 	
 }
