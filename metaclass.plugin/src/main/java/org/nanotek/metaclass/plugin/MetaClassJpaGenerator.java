@@ -23,7 +23,7 @@ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.EntityPathConfigurableClassLoader;
 import org.nanotek.MetaClassRegistry;
-import org.nanotek.metaclass.RepositoryClassBuilder;
+import org.nanotek.metaclass.DefaultRepositoryClassBuilder;
 import org.nanotek.metaclass.RepositoryPair;
 
 import com.google.common.jimfs.Configuration;
@@ -178,7 +178,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 	private void createRestRepository(File targetDirectory2, Class<?> clazz,
 			EntityPathConfigurableClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
 		
-		RepositoryClassBuilder repositoryClassBuilder = new RepositoryClassBuilder();
+		DefaultRepositoryClassBuilder repositoryClassBuilder = new DefaultRepositoryClassBuilder();
 		
 		RepositoryPair repositoryClass = repositoryClassBuilder.prepareReppositoryForClass(clazz,bytearrayclassloader2);
 		Class<?> repo = repositoryClass.unloaded().load(bytearrayclassloader2).getLoaded();

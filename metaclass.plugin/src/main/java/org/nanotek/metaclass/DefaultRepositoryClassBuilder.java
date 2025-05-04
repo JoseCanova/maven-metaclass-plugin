@@ -20,10 +20,10 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 
-public class RepositoryClassBuilder   {
+public class DefaultRepositoryClassBuilder   {
 	
 	
-	public RepositoryClassBuilder() {}
+	public DefaultRepositoryClassBuilder() {}
 
 	public RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
 		
