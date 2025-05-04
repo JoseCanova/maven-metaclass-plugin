@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.nanotek.EntityPathConfigurableClassLoader;
-import org.nanotek.MetaClassVFSURLClassLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -22,11 +21,11 @@ import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 
 public class RepositoryClassBuilder   {
-
-	public static final String basePackage = MetaClassVFSURLClassLoader.REPO_PATH.replaceAll("[/]", ".") ;
 	
+	
+	public RepositoryClassBuilder() {}
 
-	public static RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
+	public RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
 		
 		Class<?> idClass = getIdClass(clazz);
 		
@@ -59,14 +58,14 @@ public class RepositoryClassBuilder   {
 			return new RepositoryPair(repositoryName,unloaded);
 	}
 
-	 public static Class<?> getIdClass(Class<?> y) {
+	 public  Class<?> getIdClass(Class<?> y) {
 			return Stream.of(y.getDeclaredFields())
 			.filter( f -> hasIdAnnotation(f))
 			.map(f -> f.getType())
 			.findFirst().orElseThrow();
 		}
 	 
-	 public static Boolean hasIdAnnotation(Field f) {
+	 public  boolean hasIdAnnotation(Field f) {
 			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(jakarta.persistence.Id.class)).count()==1;
 		}
 	

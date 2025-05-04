@@ -29,6 +29,13 @@ import org.nanotek.metaclass.RepositoryPair;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 
+/**
+ * 
+ * 
+ * @author Jose Carlos Canova
+ * 
+ */
+//TODO: Rename this class when spring data specific annotation will be used 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class MetaClassJpaGenerator extends AbstractMojo {
 
@@ -171,12 +178,14 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 	private void createRestRepository(File targetDirectory2, Class<?> clazz,
 			EntityPathConfigurableClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
 		
-		RepositoryPair repositoryClass = RepositoryClassBuilder.prepareReppositoryForClass(clazz,bytearrayclassloader2);
+		RepositoryClassBuilder repositoryClassBuilder = new RepositoryClassBuilder();
+		
+		RepositoryPair repositoryClass = repositoryClassBuilder.prepareReppositoryForClass(clazz,bytearrayclassloader2);
 		Class<?> repo = repositoryClass.unloaded().load(bytearrayclassloader2).getLoaded();
 		metaclassregistry2.registryRepositoryClass(clazz, repo);
 	}
 
-	void serializeClassFile(File fileLocation , Class c, EntityPathConfigurableClassLoader bytearrayclassloader2) {
+	private void serializeClassFile(File fileLocation , Class c, EntityPathConfigurableClassLoader bytearrayclassloader2) {
     	
     	String directoryString = fileLocation.getAbsolutePath() ;
     	
