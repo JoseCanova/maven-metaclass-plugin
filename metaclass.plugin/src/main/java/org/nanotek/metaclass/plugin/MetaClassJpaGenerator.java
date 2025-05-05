@@ -126,6 +126,13 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     @Parameter(property = "createSpringRepositories", defaultValue = "false")
     private boolean createSpringRepositories;
     
+    
+    /**
+     * define if jakarta validation annotations will be added to field description.
+     */
+    @Parameter(property = "validation", defaultValue = "false")
+    private boolean validation;
+    
     @Override
     public void execute() throws MojoExecutionException {
     	try {
