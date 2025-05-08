@@ -2,14 +2,9 @@ package org.nanotek.metaclass.plugin;
 
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +20,7 @@ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.EntityPathConfigurableClassLoader;
 import org.nanotek.MetaClassRegistry;
+import org.nanotek.metaclass.ClassSerializer;
 import org.nanotek.metaclass.DefaultRepositoryClassBuilder;
 import org.nanotek.metaclass.RepositoryPair;
 
@@ -35,13 +31,19 @@ import jakarta.persistence.Id;
 
 /**
  * 
+ * Basic Maven plugin to generate initial JPA class model for a RDBMS Schema.
+ * Remembering that adoption of JPA standard can be suffer some opposition since 
+ * on day by day corporate life the "database model" usually come "first" or in
+ * parallel with "Business Design". So the plugin works as a facilitator speeding up
+ * the Object Model which on its turn can take some times depending the size of database model.
  * 
  * @author Jose Carlos Canova
  * 
  */
 //TODO: Rename this class when spring data specific annotation will be used 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class MetaClassJpaGenerator extends AbstractMojo {
+public class MetaClassJpaGenerator extends AbstractMojo 
+implements ClassSerializer{
 
 	public static final FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix());
 	
@@ -190,7 +192,6 @@ public class MetaClassJpaGenerator extends AbstractMojo {
         }
     }
     
-    //TODO: refactor this method when add configuration option for spring data annotations.
 	private void createRestRepository(File targetDirectory2, Class<?> clazz,
 			EntityPathConfigurableClassLoader bytearrayclassloader2, MetaClassRegistry<?> metaclassregistry2) {
 		
@@ -201,38 +202,6 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		metaclassregistry2.registryRepositoryClass(clazz, repo);
 	}
 
-	private void serializeClassFile(File fileLocation , Class c, EntityPathConfigurableClassLoader bytearrayclassloader2) {
-    	
-    	String directoryString = fileLocation.getAbsolutePath() ;
-    	
-    	String fileName =  c.getName().replaceAll("[.]","/").concat(".class");
-    	
-    	InputStream is = bytearrayclassloader2.getResourceAsStream(fileName);
-
-    	try 
-    	{
-    		String packageDir = c.getPackageName().replaceAll("[.]","/");
-    		byte[] classBytes = is.readAllBytes();
-    		var simpleName = c.getSimpleName();
-    		String finalLocationDir = directoryString.concat("/").concat(packageDir);
-    		Path dirPath = Paths.get(finalLocationDir, new String[] {});
-    		Files.createDirectories(dirPath);
-    		var classLocation  = finalLocationDir.concat("/").concat(simpleName).concat(".class");
-    		Path classPath = Paths.get(classLocation, new String[] {});
-    		if(!Files.exists(classPath, LinkOption.NOFOLLOW_LINKS))
-    			Files.createFile(classPath, new FileAttribute[0]);
-    		Files.write(classPath, classBytes, StandardOpenOption.WRITE);
-
-    		
-    	}catch(Exception ex) {
-    		ex.printStackTrace();
-    	}
-    	
-    }
-    
-     
-     
-     
 	public void decompileJavaClasses (List<Class<?>> list) {
         
  		list.forEach(cl ->{

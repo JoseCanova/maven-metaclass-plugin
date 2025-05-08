@@ -24,10 +24,10 @@ import net.bytebuddy.dynamic.DynamicType;
 public class DefaultRepositoryClassBuilder<T extends Annotation>   {
 	
 	
-	private Class<T> idClass;
+	private Class<T> idTypeClass;
 
-	public DefaultRepositoryClassBuilder(Class<T> idClass) {
-		this.idClass = idClass;
+	public DefaultRepositoryClassBuilder(Class<T> idTypeClass) {
+		this.idTypeClass = idTypeClass;
 	}
 
 	public RepositoryPair prepareReppositoryForClass(Class<?> clazz, EntityPathConfigurableClassLoader classLoader){
@@ -71,7 +71,7 @@ public class DefaultRepositoryClassBuilder<T extends Annotation>   {
 		}
 	 
 	 public  boolean hasIdAnnotation(Field f) {
-			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(idClass)).count()==1;
+			return Stream.of(f.getAnnotations()).filter(a ->a.annotationType().equals(idTypeClass)).count()==1;
 		}
 	
 }
