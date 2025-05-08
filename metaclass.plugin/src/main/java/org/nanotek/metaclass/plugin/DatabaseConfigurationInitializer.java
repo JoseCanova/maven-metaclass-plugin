@@ -22,7 +22,7 @@ implements ClassConfigurationInitializer{
 		Optional
 		.ofNullable(dataSourceConfiguration)
 		.ifPresentOrElse(file ->{
-			dataSourceService = SchemaCrawlerDataSourceService.loadFromFile(dataSourceConfiguration);
+			dataSourceService = SchemaCrawlerDataSourceService.loadFromFile(file);
 			schemaCrawlerService =  new SchemaCrawlerService(dataSourceService);
 			schemaCrawlerRdbmsMetaClassService = new SchemaCrawlerRdbmsMetaClassService(schemaCrawlerService);
 		}, ()-> new RuntimeException("no configuration file provided"));
