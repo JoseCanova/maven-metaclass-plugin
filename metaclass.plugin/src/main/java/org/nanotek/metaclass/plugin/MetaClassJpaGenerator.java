@@ -10,7 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -130,8 +132,8 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     /**
      * define if jakarta validation annotations will be added to field description.
      */
-    @Parameter(property = "validation", defaultValue = "false")
-    private boolean validation;
+    @Parameter(property = "enableValidation", defaultValue = "false")
+    private Boolean enableValidation;
     
     @Override
     public void execute() throws MojoExecutionException {
@@ -143,16 +145,22 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     			getLog().info("initializing plugin execution" + name + "!");
 		        ClassConfigurationInitializer cci = null;
 		        
+		        Map<String,Object> configurationParameters = new HashMap<>();
+		        
+		        configurationParameters.put("enableValidation", enableValidation);
+		        
+		        
+		        
 		        if(provider.equals("database") &&  !dataSourceConfiguration.isEmpty())
 		        {
 		        	getLog().info("generating model from database schema.");
 		        	cci = new DatabaseConfigurationInitializer();
-		        	cci.configureMetaClasses(dataSourceConfiguration, byteArrayClassLoader, metaClassRegistry);
+		        	cci.configureMetaClasses(dataSourceConfiguration, byteArrayClassLoader, metaClassRegistry,configurationParameters);
 		        }else if(provider.equals("file") && !fileLocation.isEmpty())
 		        {
 		        	getLog().info("generating model from json file.");
 		        	cci = new FileLocationConfigurationInitializer();
-		        	cci.configureMetaClasses(fileLocation, byteArrayClassLoader, metaClassRegistry);
+		        	cci.configureMetaClasses(fileLocation, byteArrayClassLoader, metaClassRegistry,configurationParameters);
 		        }
 		        
 		        metaClassRegistry
