@@ -97,19 +97,19 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     private File targetDirectory;
     
     /**
-     * define where will be serialized java source files.
+     * define the location will be serialized java source files.
      */
     @Parameter(property="sourceDirectory" , defaultValue = "${project.build.sourceDirectory}")
     private File sourceDirectory;
     
     /**
-     * define the entity package hierarchy in directory format.
+     * define the entity package folder hierarchy in directory format.
      */
     @Parameter(property = "entityPackage", defaultValue = "")
     private String entityPackage;
     
     /**
-     * define the repository package hierarchy in directory format.
+     * define the repository package folder hierarchy in directory format.
      */
     @Parameter(property = "repositoryPackage", defaultValue = "")
     private String repositoryPackage;
@@ -121,8 +121,8 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     private String servicePackage;
     
     /**
-     * define if will be created the spring repositories remembering that 
-     * just when generateSource option is select the spring repository option 
+     * define if will be created the spring repositories (spring data)
+     * remembering that just when generateSource option is select the spring repository option 
      * is available.
      */
     @Parameter(property = "createSpringRepositories", defaultValue = "false")
@@ -132,7 +132,7 @@ public class MetaClassJpaGenerator extends AbstractMojo {
     /**
      * define if jakarta validation annotations will be added to field description.
      */
-    @Parameter(property = "enableValidation", defaultValue = "false")
+    @Parameter(property = "enableValidation", defaultValue = "true")
     private Boolean enableValidation;
     
     @Override
@@ -148,8 +148,6 @@ public class MetaClassJpaGenerator extends AbstractMojo {
 		        Map<String,Object> configurationParameters = new HashMap<>();
 		        
 		        configurationParameters.put("enableValidation", enableValidation);
-		        
-		        
 		        
 		        if(provider.equals("database") &&  !dataSourceConfiguration.isEmpty())
 		        {
