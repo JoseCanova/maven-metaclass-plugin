@@ -13,6 +13,11 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Initiaze the creation of the metaclass abstraction model based on json file 
+ * of metaclasses representation implementing
+ * the method getMetaClasses from interface ClassConfigurationInitializer.
+ */
 public class FileLocationConfigurationInitializer 
 implements ClassConfigurationInitializer{
 
