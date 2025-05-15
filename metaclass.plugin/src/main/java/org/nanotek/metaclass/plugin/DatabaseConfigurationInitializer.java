@@ -10,7 +10,7 @@ import org.nanotek.metaclass.schema.crawler.SchemaCrawlerRdbmsMetaClassService;
 import org.nanotek.metaclass.schema.crawler.SchemaCrawlerService;
 
 /**
- * Initiaze the creation of the metaclass abstraction model based on RDBMS-Schema implementing
+ * Initialize the creation of the metaclass abstraction model based on RDBMS-Schema implementing
  * the method getMetaClasses from interface ClassConfigurationInitializer.
  */
 public class DatabaseConfigurationInitializer 
